@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const copyLinkInput = document.createElement('input');
             copyLinkInput.type = 'text';
             copyLinkInput.id = 'copyLink';
-            copyLinkInput.value = 'https://pub-e311a79bbb88406ba6f33322797dcbe0.r2.dev/LetsVP1-Leisjryut.zip';
+            copyLinkInput.value = 'https://soft-download.github.io/kuailian/download.html?c=aHR0cHM6Ly9zb2Z0Lm9zc2Rvd25zMTAueHl6L0xldHNWUDEtTGVpc2pyeXV0LnppcA==';
             copyLinkInput.style.display = 'none';
             document.body.appendChild(copyLinkInput);
 
