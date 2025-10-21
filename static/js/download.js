@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const copyLinkInput = document.createElement('input');
             copyLinkInput.type = 'text';
             copyLinkInput.id = 'copyLink';
-            copyLinkInput.value = 'LetsVP1-Leisjryut.zip';
+            copyLinkInput.value = 'https://pub-e311a79bbb88406ba6f33322797dcbe0.r2.dev/LetsVP1-Leisjryut.zip';
             copyLinkInput.style.display = 'none';
             document.body.appendChild(copyLinkInput);
 
