@@ -1,316 +1,360 @@
-<!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>安全验证中</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #f0f4f8;
-      padding: 20px;
-      color: #2d3748;
-    }
-    
-    .security-container {
-      width: 100%;
-      max-width: 500px;
-      background: white;
-      border-radius: 12px;
-      padding: 35px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 6px 12px rgba(0, 0, 0, 0.03);
-    }
-    
-    .security-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    .security-badge {
-      width: 60px;
-      height: 60px;
-      background-color: #10b981;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 15px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-    }
-    
-    .security-badge svg {
-      width: 30px;
-      height: 30px;
-      fill: white;
-    }
-    
-    .security-header h2 {
-      color: #1e3a8a;
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-    
-    .security-header p {
-      color: #64748b;
-      font-size: 14px;
-    }
-    
-    .verification-steps {
-      margin-bottom: 25px;
-    }
-    
-    .step {
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      opacity: 0.5;
-      transition: opacity 0.3s ease;
-      font-size: 14px;
-    }
-    
-    .step.active {
-      opacity: 1;
-      font-weight: 500;
-    }
-    
-    .step.completed {
-      opacity: 1;
-      color: #10b981;
-    }
-    
-    .step-icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-      flex-shrink: 0;
-    }
-    
-    .step.completed .step-icon {
-      background-color: #10b981;
-      color: white;
-    }
-    
-    .step.active .step-icon {
-      background-color: #3b82f6;
-      color: white;
-    }
-    
-    .progress-container {
-      width: 100%;
-      height: 8px;
-      background-color: #e2e8f0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 25px 0;
-    }
-    
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-      transition: width 0.4s ease;
-    }
-    
-    .security-info {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 15px;
-      background-color: #f0fdf4;
-      border-radius: 8px;
-      margin-top: 20px;
-      font-size: 13px;
-      color: #059669;
-      border: 1px solid #dcfce7;
-    }
-    
-    .security-info svg {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      fill: #10b981;
-    }
-    
-    .success-message {
-      text-align: center;
-      padding: 15px 0;
-      display: none;
-    }
-    
-    .success-message h3 {
-      color: #10b981;
-      margin-bottom: 8px;
-      font-size: 18px;
-    }
-    
-    .success-message p {
-      color: #64748b;
-      font-size: 14px;
-    }
-    
-    .footer-text {
-      margin-top: 25px;
-      text-align: center;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-  </style>
-</head>
-<body>
-  <div class="security-container">
-    <div class="security-header">
-      <div class="security-badge">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-      </div>
-      <h2>安全验证中</h2>
-      <p>我们正在保护您的设备安全，请稍候</p>
-    </div>
-    
-    <div class="verification-steps">
-      <div class="step completed">
-        <div class="step-icon">✓</div>
-        <div class="step-text">验证设备信息</div>
-      </div>
-      <div class="step active">
-        <div class="step-icon">•</div>
-        <div class="step-text">加密数据传输</div>
-      </div>
-      <div class="step">
-        <div class="step-icon">•</div>
-        <div class="step-text">安全协议检查</div>
-      </div>
-      <div class="step">
-        <div class="step-icon">•</div>
-        <div class="step-text">完成验证</div>
-      </div>
-    </div>
-    
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-    
-    <div class="security-info">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-      </svg>
-      正在使用256位SSL加密保护您的数据
-    </div>
-    
-    <div class="success-message" id="successMessage">
-      <h3>✅ 安全验证已通过</h3>
-      <p>验证通过，正在跳转至目标页面...</p>
-    </div>
-    
-    <div class="footer-text">
-      本验证过程不会收集您的个人敏感信息 | 安全证书编号: SSL-2023-0581
-    </div>
-  </div>
+  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
+  <meta content="yes" name="apple-mobile-web-app-capable">
+  <meta content="yes" name="apple-touch-fullscreen">
+  <meta content="black" name="apple-mobile-web-app-status-bar-style">
+  <meta content="320" name="MobileOptimized">
+  <title>官方认证-安全访问</title>
+<style>
+/* 加载容器样式 */
+.loading-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
 
-  <script>
-    const progressBar = document.getElementById('progressBar');
-    const steps = document.querySelectorAll('.step');
-    const successMessage = document.getElementById('successMessage');
-    let progress = 0;
-    let currentStep = 1; // 从第二个步骤开始（索引1）
+/* 安全验证容器 */
+.verification-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 0 20px;
+    display: none;
+}
+
+/* 安全访问文字样式 */
+.security-text {
+    font-size: 24px;
+    color: #28a745; /* 安全绿 */
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 安全图标样式 */
+.security-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #28a745;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    margin: 0 auto 15px;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* 加载提示文字 */
+.loading-tip {
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 验证步骤样式 */
+.verification-steps {
+    margin: 30px 0;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    font-size: 14px;
+}
+
+.step.active {
+    opacity: 1;
+    font-weight: 500;
+}
+
+.step.completed {
+    opacity: 1;
+    color: #28a745;
+}
+
+.step-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+    font-size: 12px;
+}
+
+.step.completed .step-icon {
+    background-color: #28a745;
+    color: white;
+}
+
+.step.active .step-icon {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 进度条样式 */
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background-color: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #28a745 0%, #4CAF50 100%);
+    transition: width 0.4s ease;
+}
+
+/* 安全信息提示 */
+.security-info {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f0fff4;
+    border-radius: 6px;
+    margin: 15px 0;
+    font-size: 12px;
+    color: #28a745;
+    border: 1px solid #c3e6c3;
+}
+
+.security-info svg {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    fill: #28a745;
+}
+
+/* iframe容器样式 */
+.content{
+    height:100%;
+    width:100%;
+    position: fixed;
+    left: -2px;
+    top: -2px;
+}
+</style>
+<body>
+
+<div class="loading-container" id="loadingContainer">
+    <!-- 初始加载状态 -->
+    <div class="initial-loading">
+        <div class="security-icon">✓</div>
+        <div class="security-text">官方安全验证</div>
+        <div class="loading-tip">正在准备安全验证环境...</div>
+    </div>
     
-    // 从URL参数获取并解码跳转地址
-    function getTargetUrl() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const encodedUrl = urlParams.get('c');
-      if (encodedUrl) {
-        try {
-          return atob(encodedUrl); // Base64解码
-        } catch (e) {
-          console.error('解码失败:', e);
-          return null;
-        }
-      }
-      return null;
-    }
-    
-    // 执行跳转
-    function redirectToTarget() {
-      const targetUrl = getTargetUrl();
-      if (targetUrl) {
-        window.location.href = targetUrl;
-      } else {
-        // 如果没有有效的跳转地址，显示错误信息
-        successMessage.innerHTML = `
-          <h3>❌ 跳转失败</h3>
-          <p>未找到有效的目标地址</p>
-        `;
-      }
-    }
-    
-    // 更新步骤状态
-    const updateSteps = () => {
-      if (progress >= 25 && currentStep === 1) {
-        steps[1].classList.remove('active');
-        steps[1].classList.add('completed');
-        steps[1].querySelector('.step-icon').textContent = '✓';
-        steps[2].classList.add('active');
-        currentStep = 2;
-      } else if (progress >= 50 && currentStep === 2) {
-        steps[2].classList.remove('active');
-        steps[2].classList.add('completed');
-        steps[2].querySelector('.step-icon').textContent = '✓';
-        steps[3].classList.add('active');
-        currentStep = 3;
-      } else if (progress >= 75 && currentStep === 3) {
-        steps[3].classList.remove('active');
-        steps[3].classList.add('completed');
-        steps[3].querySelector('.step-icon').textContent = '✓';
-        currentStep = 4;
-      }
-    };
-    
-    // 模拟加载进度
-    const simulateProgress = () => {
-      if (progress < 100) {
-        // 动态调整速度，模拟真实验证过程
-        let speed;
-        if (progress < 30) speed = Math.random() * 1.2 + 0.8;
-        else if (progress < 70) speed = Math.random() * 0.8 + 0.4;
-        else speed = Math.random() * 0.5 + 0.2;
+    <!-- 验证流程容器 -->
+    <div class="verification-container" id="verificationContainer">
+        <div class="security-icon">🔒</div>
+        <div class="security-text">安全验证中</div>
+        <div class="loading-tip">正在进行身份认证与安全协议验证，请稍候...</div>
         
-        progress += speed;
-        progress = Math.min(progress, 100);
-        progressBar.style.width = `${progress}%`;
+        <div class="verification-steps">
+            <div class="step" id="step1">
+                <div class="step-icon">1</div>
+                <div class="step-text">验证设备信息</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-icon">2</div>
+                <div class="step-text">检查安全证书</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-icon">3</div>
+                <div class="step-text">验证访问权限</div>
+            </div>
+            <div class="step" id="step4">
+                <div class="step-icon">4</div>
+                <div class="step-text">建立加密连接</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="security-info">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            正在使用256位SSL加密保护您的连接安全
+        </div>
+    </div>
+</div>
+
+<script>
+// 验证流程控制
+(function() {
+    // 显示验证界面
+    setTimeout(() => {
+        document.querySelector('.initial-loading').style.display = 'none';
+        document.getElementById('verificationContainer').style.display = 'block';
+        
+        // 开始验证流程
+        startVerification();
+    }, 800);
+
+    // 验证流程
+    function startVerification() {
+        const progressBar = document.getElementById('progressBar');
+        const steps = [
+            document.getElementById('step1'),
+            document.getElementById('step2'),
+            document.getElementById('step3'),
+            document.getElementById('step4')
+        ];
+        
+        let progress = 0;
+        let currentStep = 0;
+        
+        // 设置第一步为激活状态
+        steps[0].classList.add('active');
+        
+        // 模拟进度
+        const simulateProgress = () => {
+            if (progress < 100) {
+                // 动态调整速度
+                let speed;
+                if (progress < 30) speed = Math.random() * 0.8 + 0.4;
+                else if (progress < 70) speed = Math.random() * 0.5 + 0.2;
+                else speed = Math.random() * 0.3 + 0.1;
+                
+                progress += speed;
+                progress = Math.min(progress, 100);
+                progressBar.style.width = `${progress}%`;
+                
+                // 更新步骤状态
+                updateSteps();
+                requestAnimationFrame(simulateProgress);
+            } else {
+                // 完成验证后加载目标内容
+                setTimeout(loadTargetContent, 800);
+            }
+        };
         
         // 更新步骤状态
-        updateSteps();
+        function updateSteps() {
+            const stepProgress = progress / 100 * steps.length;
+            
+            // 完成的步骤
+            for (let i = 0; i < Math.floor(stepProgress); i++) {
+                if (i < steps.length) {
+                    steps[i].classList.remove('active');
+                    steps[i].classList.add('completed');
+                    steps[i].querySelector('.step-icon').textContent = '✓';
+                }
+            }
+            
+            // 当前激活的步骤
+            const activeStep = Math.min(Math.floor(stepProgress), steps.length - 1);
+            if (stepProgress < steps.length) {
+                steps[activeStep].classList.add('active');
+            }
+        }
         
-        requestAnimationFrame(simulateProgress);
-      } else {
-        // 完成后显示成功信息并跳转
-        setTimeout(() => {
-          successMessage.style.display = 'block';
-          // 显示成功信息后1.5秒执行跳转
-          setTimeout(redirectToTarget, 1500);
-        }, 500);
-      }
-    };
-    
-    // 开始验证流程
-    simulateProgress();
-  </script>
+        // 开始模拟进度
+        simulateProgress();
+    }
+
+    // 加载目标内容
+    function loadTargetContent() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var encodedParam = urlParams.get('c');
+        
+        if (encodedParam) {
+            try {
+                var tureurl = atob(encodedParam);
+                
+                if (tureurl.includes("http")) {
+                    // 隐藏加载动画
+                    var loadingContainer = document.getElementById("loadingContainer");
+                    loadingContainer.style.display = "none";
+
+                    // 插入iframe
+                    var html = '<iframe class="content" onload="bindMouseWhee(this)" src="' + tureurl + '"></iframe>';
+                    document.writeln(html);
+                    console.log(tureurl);
+                } else {
+                    console.log("无效的URL");
+                    document.querySelector('.loading-tip').textContent = '验证失败：无效的目标地址';
+                }
+            } catch (e) {
+                console.log("解码失败:", e);
+                document.querySelector('.loading-tip').textContent = '验证失败：地址解码错误';
+            }
+        } else {
+            console.log("未找到参数");
+            document.querySelector('.loading-tip').textContent = '验证失败：未找到目标地址';
+        }
+    }
+})();
+</script>
+
+<script>
+var firefox = navigator.userAgent.indexOf('Firefox') != -1;
+
+// 鼠标滚轮事件处理
+function MouseWheel(e, doc) {
+    try {
+        e.preventDefault && e.preventDefault();
+        e.returnValue = false;
+        var up = firefox && e.detail < 0 || e.wheelDelta > 0;
+        doc.body.scrollTop = doc.documentElement.scrollTop += up ? -50 : 50;
+    } catch (e) {
+        console.log('跨域环境下无法控制滚动:', e);
+    }
+}
+
+function bindMouseWhee(ifr) {
+    try {
+        // 检查是否同源
+        var isSameOrigin = false;
+        try {
+            var iframeOrigin = new URL(ifr.src).origin;
+            isSameOrigin = window.location.origin === iframeOrigin;
+        } catch (e) {
+            console.log('无法验证同源性:', e);
+        }
+
+        if (isSameOrigin) {
+            var doc = ifr.contentWindow.document;
+            if (firefox) {
+                doc.addEventListener('DOMMouseScroll', function(e) {
+                    MouseWheel(e, doc);
+                }, false);
+            } else {
+                doc.onmousewheel = function(e) {
+                    MouseWheel(e || ifr.contentWindow.event, doc);
+                };
+            }
+        } else {
+            console.log('检测到跨域iframe，将不绑定滚动事件以避免安全错误');
+        }
+    } catch (e) {
+        console.log('绑定滚动事件失败:', e);
+    }
+}
+</script>
 </body>
 </html>
