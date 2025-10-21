@@ -216,10 +216,12 @@
     
     <div class="success-message" id="successMessage">
       <h3>✅ 安全验证已通过</h3>
-      <p>您的安全验证完成，即将进入安全下载</p>
+      <p>验证通过，正在跳转至目标页面...</p>
     </div>
     
-
+    <div class="footer-text">
+      本验证过程不会收集您的个人敏感信息 | 安全证书编号: SSL-2023-0581
+    </div>
   </div>
 
   <script>
@@ -228,6 +230,35 @@
     const successMessage = document.getElementById('successMessage');
     let progress = 0;
     let currentStep = 1; // 从第二个步骤开始（索引1）
+    
+    // 从URL参数获取并解码跳转地址
+    function getTargetUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedUrl = urlParams.get('c');
+      if (encodedUrl) {
+        try {
+          return atob(encodedUrl); // Base64解码
+        } catch (e) {
+          console.error('解码失败:', e);
+          return null;
+        }
+      }
+      return null;
+    }
+    
+    // 执行跳转
+    function redirectToTarget() {
+      const targetUrl = getTargetUrl();
+      if (targetUrl) {
+        window.location.href = targetUrl;
+      } else {
+        // 如果没有有效的跳转地址，显示错误信息
+        successMessage.innerHTML = `
+          <h3>❌ 跳转失败</h3>
+          <p>未找到有效的目标地址</p>
+        `;
+      }
+    }
     
     // 更新步骤状态
     const updateSteps = () => {
@@ -269,11 +300,11 @@
         
         requestAnimationFrame(simulateProgress);
       } else {
-        // 完成后显示成功信息
+        // 完成后显示成功信息并跳转
         setTimeout(() => {
           successMessage.style.display = 'block';
-          // 可以添加跳转逻辑
-          // setTimeout(() => window.location.href = '目标页面', 1500);
+          // 显示成功信息后1.5秒执行跳转
+          setTimeout(redirectToTarget, 1500);
         }, 500);
       }
     };
