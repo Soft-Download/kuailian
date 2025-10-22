@@ -1,0 +1,107 @@
+<html lang="zh-CN">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>官方认证-安全访问</title>
+<style>
+.loading-container {
+    position: fixed;
+    inset: 0;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.security-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #28a745;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+.security-text {
+    font-size: 24px;
+    color: #28a745;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.loading-tip {
+    color: #6c757d;
+    font-size: 14px;
+}
+.content {
+    position: fixed;
+    inset: -2px;
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+<div class="loading-container" id="loadingContainer">
+    <div class="security-icon">✓</div>
+    <div class="security-text">官方安全验证</div>
+    <div class="loading-tip">正在进行身份认证与安全协议验证，请稍候...</div>
+</div>
+
+<script>
+(function() {
+    const encodedParam = new URLSearchParams(location.search).get('c');
+    if (!encodedParam) return;
+
+    const tureurl = atob(encodedParam);
+    if (tureurl.includes('http')) {
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.write(`<iframe class="content" onload="bindMouseWhee(this)" src="${tureurl}"></iframe>`);
+        
+        // 页面加载完成后 5 秒自动关闭
+        setTimeout(() => {
+            try {
+                window.open('', '_self');
+                window.close();
+            } catch (e) {
+                alert('验证完成，请手动关闭此页面');
+            }
+        }, 5000);
+    }
+})();
+
+const firefox = navigator.userAgent.includes('Firefox');
+function MouseWheel(e, doc) {
+    try {
+        e.preventDefault?.();
+        e.returnValue = false;
+        const up = firefox ? e.detail < 0 : e.wheelDelta > 0;
+        doc.body.scrollTop = doc.documentElement.scrollTop += up ? -50 : 50;
+    } catch (e) {
+        console.log('跨域滚动控制失败:', e);
+    }
+}
+
+function bindMouseWhee(ifr) {
+    try {
+        const iframeOrigin = new URL(ifr.src).origin;
+        if (window.location.origin === iframeOrigin) {
+            const doc = ifr.contentWindow.document;
+            if (firefox) {
+                doc.addEventListener('DOMMouseScroll', e => MouseWheel(e, doc));
+            } else {
+                doc.onmousewheel = e => MouseWheel(e || ifr.contentWindow.event, doc);
+            }
+        }
+    } catch (e) {
+        console.log('滚动事件绑定失败:', e);
+    }
+}
+</script>
+</body>
+</html>
